@@ -4,6 +4,11 @@ from duckduckgo_search import DDGS
 from datetime import datetime
 from dotenv import load_dotenv
 
+
+st.set_page_config(page_title="Emzy ChatNet", page_icon="🌐")
+st.header('Chatbot with Internet Access')
+st.write('Equipped with internet access, enables users to ask questions and make research')
+
 load_dotenv()
 MODEL = "llama3.2"
 
