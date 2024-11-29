@@ -112,7 +112,7 @@ def run_workflow(query):
 # Streamlit app interface
 def main():
     """Main function to run the Streamlit app"""
-    st.title("Internet Research Assistant 🔎")
+    st.title("Emzy Internet Research Assistant 🔎")
     st.write("Use this assistant to gather and generate research-based articles with internet access.")
 
     # Initialize session state for query and article if not set
