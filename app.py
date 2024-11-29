@@ -87,6 +87,7 @@ def run_workflow(query):
         # 1. Search the web
         search_response = client.run(agent=web_search_agent, messages=[{"role": "user", "content": f"Search the web for {query}"}],)
         raw_news = search_response.messages[-1]["content"]
+        st.write(raw_news)
 
         # 2. Analyze and synthesize the results
         research_response = client.run(agent=researcher_agent, messages=[{"role": "user", "content": raw_news}],)
@@ -130,6 +131,7 @@ def main():
                 print(f"Running workflow for query: {query}")
                 streaming_response = run_workflow(query)
                 st.session_state.query = query
+                st.write(query) # remove later
                 full_response = ""
                 message_placeholder = st.empty()
 
