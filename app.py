@@ -137,28 +137,26 @@ def main():
 
     # Button to generate the article based on the search query
     if st.button("Generate Article") and query:
-        with st.spinner("Generating article..."):
-            # Run the complete workflow
+    with st.spinner("Generating article..."):
+        try:
+            print(f"Running workflow for query: {query}")
             streaming_response = run_workflow(query)
             st.session_state.query = query
-
-            # Placeholder for streaming content
-            message_placeholder = st.empty()
             full_response = ""
+            message_placeholder = st.empty()
 
-            # Stream the article content and update the UI incrementally
             for chunk in streaming_response:
                 if isinstance(chunk, dict) and 'delim' in chunk:
-                    continue  # Skip delimiter chunks
-                
+                    continue
                 if isinstance(chunk, dict) and 'content' in chunk:
                     content = chunk['content']
                     full_response += content
-                    message_placeholder.markdown(full_response + "▌")  # Show the streamed content
-            
-            # Final update of the full response
+                    message_placeholder.markdown(full_response + "▌")
+
             message_placeholder.markdown(full_response)
             st.session_state.article = full_response
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
 
     # Display the article if available
     if st.session_state.article:
