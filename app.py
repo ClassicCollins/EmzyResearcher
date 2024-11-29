@@ -133,30 +133,31 @@ def main():
         if st.button("Clear"):
             st.session_state.query = ""
             st.session_state.article = ""
-            st.rerun()
+            st.experimental_rerun()
 
     # Button to generate the article based on the search query
     if st.button("Generate Article") and query:
-    with st.spinner("Generating article..."):
-        try:
-            print(f"Running workflow for query: {query}")
-            streaming_response = run_workflow(query)
-            st.session_state.query = query
-            full_response = ""
-            message_placeholder = st.empty()
+        with st.spinner("Generating article..."):
+            try:
+                print(f"Running workflow for query: {query}")
+                streaming_response = run_workflow(query)
+                st.session_state.query = query
+                full_response = ""
+                message_placeholder = st.empty()
 
-            for chunk in streaming_response:
-                if isinstance(chunk, dict) and 'delim' in chunk:
-                    continue
-                if isinstance(chunk, dict) and 'content' in chunk:
-                    content = chunk['content']
-                    full_response += content
-                    message_placeholder.markdown(full_response + "▌")
+                # Streaming response
+                for chunk in streaming_response:
+                    if isinstance(chunk, dict) and 'delim' in chunk:
+                        continue
+                    if isinstance(chunk, dict) and 'content' in chunk:
+                        content = chunk['content']
+                        full_response += content
+                        message_placeholder.markdown(full_response + "▌")
 
-            message_placeholder.markdown(full_response)
-            st.session_state.article = full_response
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+                message_placeholder.markdown(full_response)
+                st.session_state.article = full_response
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
 
     # Display the article if available
     if st.session_state.article:
