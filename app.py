@@ -14,7 +14,7 @@ st.header('Chatbot with Internet Access')
 st.write('Equipped with internet access, enables users to ask questions and make research')
 
 # Define model
-MODEL = "gpt-3.5"
+MODEL = "llama3.2"
 
 # Initialize Swarm client
 client = Swarm()
