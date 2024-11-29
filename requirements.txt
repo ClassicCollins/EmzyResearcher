@@ -1,5 +1,6 @@
 streamlit
 duckduckgo-search
 python-dotenv
-openai 
+openai
+git+https://github.com/openai/swarm.git
 swarm 
