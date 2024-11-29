@@ -128,10 +128,9 @@ def main():
     if st.button("Generate Article") and query:
         with st.spinner("Generating article..."):
             try:
-                print(f"Running workflow for query: {query}")
+                st.write(f"Running workflow for query: {query}")
                 streaming_response = run_workflow(query)
                 st.session_state.query = query
-                st.write(query) # remove later
                 full_response = ""
                 message_placeholder = st.empty()
 
