@@ -3,6 +3,7 @@ from swarm import Swarm, Agent
 from duckduckgo_search import DDGS
 from datetime import datetime
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # Load environment variables
 load_dotenv()
@@ -13,7 +14,7 @@ st.header('Chatbot with Internet Access')
 st.write('Equipped with internet access, enables users to ask questions and make research')
 
 # Define model
-MODEL = "llama3.2"
+MODEL = "gpt-3.5"
 
 # Initialize Swarm client
 client = Swarm()
