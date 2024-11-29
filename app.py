@@ -15,9 +15,28 @@ st.write('Equipped with internet access, enables users to ask questions and make
 
 # Define model
 #MODEL = "llama3.2" remove #
+# Function to set OpenAI API key dynamically in the session state
+def set_openai_api_key():
+    api_key_input = st.text_input("Enter your OpenAI API Key", type="password")
+    if api_key_input:
+        os.environ['OPENAI_API_KEY'] = api_key_input
+        st.success("OpenAI API Key set successfully!")
+    else:
+        st.warning("Please enter your OpenAI API Key to continue.")
 
-# Initialize Swarm client
-client = Swarm()
+# Input for OpenAI API Key
+st.subheader("OpenAI API Key Setup")
+set_openai_api_key()
+
+# Initialize Swarm client only after API key is set
+if 'OPENAI_API_KEY' in os.environ and os.environ['OPENAI_API_KEY']:
+    # Initialize the Swarm client after API key is entered
+    # Initialize Swarm client
+    client = Swarm()
+
+else:
+    st.error("Please enter a valid URL.")
+
 
 # Initialize DuckDuckGo Search Client
 ddgs = DDGS()
