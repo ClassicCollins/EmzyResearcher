@@ -1,5 +1,5 @@
 streamlit
 openai==1.35.15
 python-dotenv
-git+https://github.com/openai/swarm.git
+swarm @ git+https://github.com/openai/swarm.git@d46acab2d41f4d2d351fa9a34fe0677da20f6296 ; python_version >= "3.11" and python_version < "4.0"
 duckduckgo-search==6.2.1
