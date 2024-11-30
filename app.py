@@ -145,7 +145,7 @@ def main():
         if st.button("Clear"):
             st.session_state.query = ""
             st.session_state.article = ""
-            st.experimental_rerun()
+            st.rerun()
 
     # Button to generate the article based on the search query
     if st.button("Generate Article") and query:
