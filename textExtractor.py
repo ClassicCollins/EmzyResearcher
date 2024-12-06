@@ -29,14 +29,22 @@ with st.sidebar:
         if st.button("Extract Text 🔍"):
             with st.spinner("Processing image..."):
                 try:
+                    # Since Ollama's chat function likely doesn't accept images as part of a 'messages' list, 
+                    # we need to send the image data in a format Ollama expects (check Ollama docs)
+                    
+                    # Convert image to bytes
+                    img_bytes = uploaded_file.getvalue()
+
+                    # Assuming Ollama supports a direct image-to-text method, check Ollama SDK usage
                     response = ollama.chat(
-                        model="llama3.2-vision",  # Example model (ensure it's the right one for OCR)
+                        model="llama3.2-vision",  # Example model, adjust based on your requirements
                         messages=[{
                             'role': 'user',
                             'content': "Analyze the text in the provided image and extract it."
                         }],
-                        images=[uploaded_file.getvalue()]
+                        data=img_bytes  # Assuming 'data' is the correct keyword to send image data
                     )
+
                     st.session_state['ocr_result'] = response.message.content
                 except Exception as e:
                     st.error(f"Error processing image: {str(e)}")
