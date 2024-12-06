@@ -1,6 +1,5 @@
 streamlit
 pytesseract
-ollama
 Pillow
 duckduckgo-search
 python-dotenv
