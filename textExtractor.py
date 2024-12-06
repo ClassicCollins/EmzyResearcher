@@ -15,7 +15,7 @@ st.set_page_config(
 st.title("🦙 Llama OCR")
 
 # Add clear button to top right
-col1, col2 = st.columns([6,1])
+col1, col2 = st.columns([6, 1])
 with col2:
     if st.button("Clear 🗑️"):
         if 'ocr_result' in st.session_state:
@@ -35,30 +35,43 @@ with st.sidebar:
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image")
         
+        # Allow users to select the model version (optional)
+        model_version = st.selectbox("Select Model Version", ["llama3.2-vision", "llama2-vision"], index=0)
+        
         if st.button("Extract Text 🔍", type="primary"):
             with st.spinner("Processing image..."):
                 try:
                     response = ollama.chat(
-                        model='llama3.2-vision',
+                        model=model_version,
                         messages=[{
                             'role': 'user',
                             'content': """Analyze the text in the provided image. Extract all readable content
                                         and present it in a structured Markdown format that is clear, concise, 
                                         and well-organized. Ensure proper formatting (e.g., headings, lists, or
                                         code blocks) as necessary to represent the content effectively.""",
-                            'images': [uploaded_file.getvalue()]
+                            'images': [uploaded_file.getvalue()]  # Sending image as raw bytes
                         }]
                     )
+                    
+                    # Save OCR result to session state
+                    if 'ocr_result' not in st.session_state:
+                        st.session_state['ocr_result'] = ""
                     st.session_state['ocr_result'] = response.message.content
+                    
+                except ollama.exceptions.OllamaAPIError as api_error:
+                    st.error(f"API Error: {str(api_error)}")
                 except Exception as e:
-                    st.error(f"Error processing image: {str(e)}")
+                    st.error(f"An error occurred: {str(e)}")
 
 # Main content area for results
 if 'ocr_result' in st.session_state:
-    st.markdown(st.session_state['ocr_result'])
+    if st.session_state['ocr_result']:
+        st.markdown(st.session_state['ocr_result'])
+    else:
+        st.warning("No OCR result available.")
 else:
     st.info("Upload an image and click 'Extract Text' to see the results here.")
 
 # Footer
 st.markdown("---")
-st.markdown("Made with ❤️ using Llama Vision Model2 | [Report an Issue](https://github.com/patchy631/ai-engineering-hub/issues)")
+st.markdown("Made with ❤️ using Llama Vision Model2 | [Report an Issue](https://github.com/)")
