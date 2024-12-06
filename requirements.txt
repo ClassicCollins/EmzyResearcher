@@ -1,4 +1,6 @@
 streamlit
+ollama
+PIL
 duckduckgo-search
 python-dotenv
 openai
