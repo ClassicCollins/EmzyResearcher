@@ -1,7 +1,6 @@
 streamlit
 ollama
-PIL
+Pillow
 duckduckgo-search
 python-dotenv
-openai
 swarm @ git+https://github.com/openai/swarm.git
