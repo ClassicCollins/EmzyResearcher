@@ -28,14 +28,15 @@ st.markdown("---")
 # Move upload controls to sidebar
 with st.sidebar:
     st.header("Upload Image")
-    uploaded_file = st.file_uploader("Choose an image...")
+    uploaded_file = st.file_uploader("Choose an image...", type='jpg")
     
     if uploaded_file is not None:
         # Display the uploaded image
         image = Image.open(uploaded_file)
+        st.write(image)
         st.image(image, caption="Uploaded Image")
         
-        if st.button("Extract Text 🔍"):
+        if st.button("Extract Text 🔍", type='jpg'):
             with st.spinner("Processing image..."):
                 try:
                     response = ollama.chat(
@@ -43,7 +44,7 @@ with st.sidebar:
                         messages=[{
                             'role': 'user',
                             'content': 'What is in this image?',
-                            'images': [image]
+                            'images': ['image.jpg']
                         }]
                     )
                     st.session_state['ocr_result'] = response
