@@ -1,5 +1,5 @@
 # Use an official Python image as the base image
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 # Install system dependencies including Tesseract and other necessary libraries
 RUN apt-get update && apt-get install -y \
     git \
-    tesseract-ocr \
+    ollama-ocr \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
