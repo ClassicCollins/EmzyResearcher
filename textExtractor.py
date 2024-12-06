@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Title and description in main area
+# Title and description in the main area
 st.title("🦙 Ollama OCR")
 st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Ollama OCR!</p>', unsafe_allow_html=True)
 st.markdown("---")
@@ -29,23 +29,24 @@ with st.sidebar:
         if st.button("Extract Text 🔍"):
             with st.spinner("Processing image..."):
                 try:
-                    # Since Ollama's chat function likely doesn't accept images as part of a 'messages' list, 
-                    # we need to send the image data in a format Ollama expects (check Ollama docs)
-                    
-                    # Convert image to bytes
+                    # Convert the image to bytes (needed for API processing)
                     img_bytes = uploaded_file.getvalue()
 
-                    # Assuming Ollama supports a direct image-to-text method, check Ollama SDK usage
+                    # Call the Ollama API to process the image
+                    # Assuming Ollama can process the image through 'messages' or other correct keyword.
+                    # You need to check Ollama's specific documentation for correct usage.
                     response = ollama.chat(
-                        model="llama3.2-vision",  # Example model, adjust based on your requirements
+                        model="llama3.2-vision",  # Replace with the actual model name you are using
                         messages=[{
                             'role': 'user',
                             'content': "Analyze the text in the provided image and extract it."
                         }],
-                        data=img_bytes  # Assuming 'data' is the correct keyword to send image data
+                        files=[("file", img_bytes)]  # Assuming this is the correct way to send the image
                     )
 
+                    # Store the result in session state
                     st.session_state['ocr_result'] = response.message.content
+
                 except Exception as e:
                     st.error(f"Error processing image: {str(e)}")
 
