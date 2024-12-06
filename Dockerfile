@@ -15,8 +15,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*  # Clean up apt cache to reduce image size
 
 # Clone the GitHub repository
-RUN git clone https://github.com/your-username/your-repository.git /textExtractor
-
+RUN git clone https://github.com/ClassicCollins/EmzyResearcher/blob/classic/textExtractor
 # Set the working directory inside the container
 WORKDIR /textExtractor
 
