@@ -39,7 +39,7 @@ with st.sidebar:
                         model="llama3.2-vision",  # Replace with the actual model you're using
                         messages=[{
                             'role': 'user',
-                            'content': "Analyze the text in the provided image and extract it."'
+                            'content': "Analyze the text in the provided image and extract it.",
                             'images': [img_base64]
                         }],
                         
