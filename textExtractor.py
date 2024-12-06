@@ -44,7 +44,7 @@ with st.sidebar:
                         messages=[{
                             'role': 'user',
                             'content': 'What is in this image?',
-                            'images': [image]
+                            'images': ['image']
                         }]
                     )
                     st.session_state['ocr_result'] = response
