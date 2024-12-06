@@ -36,7 +36,7 @@ with st.sidebar:
         st.write(image)
         st.image(image, caption="Uploaded Image")
         
-        if st.button("Extract Text 🔍", type='jpg'):
+        if st.button("Extract Text 🔍"):
             with st.spinner("Processing image..."):
                 try:
                     response = ollama.chat(
