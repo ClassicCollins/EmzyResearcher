@@ -20,7 +20,7 @@ st.markdown("---")
 # Upload controls in the sidebar
 with st.sidebar:
     st.header("Upload Image")
-    uploaded_file = st.file_uploader("Choose an image...", type=['png', 'jpg', 'jpeg'])
+    uploaded_file = st.file_uploader("Choose an image...", type='jpg')
     
     if uploaded_file is not None:
         # Display the uploaded image
@@ -39,14 +39,14 @@ with st.sidebar:
                         model="llama3.2-vision",  # Replace with the actual model you're using
                         messages=[{
                             'role': 'user',
-                            'content': "Analyze the text in the provided image and extract it.",
+                            'content': "What is in this image?",
                             'images': [img_base64]
                         }],
                         
                     )
 
                     # Store the result in session state
-                    st.session_state['ocr_result'] = response.message.content
+                    st.session_state['ocr_result'] = response
 
                 except Exception as e:
                     st.error(f"Error processing image: {str(e)}")
