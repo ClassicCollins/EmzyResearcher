@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Title and description in the main area
+# Title and description in main area
 st.title("🦙 Ollama OCR")
 st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Ollama OCR!</p>', unsafe_allow_html=True)
 st.markdown("---")
@@ -32,16 +32,13 @@ with st.sidebar:
                     # Convert the image to bytes (needed for API processing)
                     img_bytes = uploaded_file.getvalue()
 
-                    # Call the Ollama API to process the image
-                    # Assuming Ollama can process the image through 'messages' or other correct keyword.
-                    # You need to check Ollama's specific documentation for correct usage.
-                    response = ollama.chat(
-                        model="llama3.2-vision",  # Replace with the actual model name you are using
-                        messages=[{
-                            'role': 'user',
-                            'content': "Analyze the text in the provided image and extract it."
-                        }],
-                        files=[("file", img_bytes)]  # Assuming this is the correct way to send the image
+                    # Assuming Ollama has a specific function for OCR/image processing
+                    # Example: if Ollama uses a different function like `ollama.ocr()`
+                    # You need to confirm the function and usage with Ollama's documentation
+
+                    response = ollama.ocr(  # This is speculative. Please verify with Ollama docs.
+                        model="llama3.2-vision",  # Replace with the actual model you're using
+                        image=img_bytes  # Sending image data
                     )
 
                     # Store the result in session state
