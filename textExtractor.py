@@ -58,8 +58,6 @@ with st.sidebar:
                         st.session_state['ocr_result'] = ""
                     st.session_state['ocr_result'] = response.message.content
                     
-                except ollama.exceptions.OllamaAPIError as api_error:
-                    st.error(f"API Error: {str(api_error)}")
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
 
