@@ -1,26 +1,22 @@
 import streamlit as st
-from PIL import Image
 import pytesseract
+from PIL import Image
+import os
+
+# Set Tesseract path (ensure it's available in the Streamlit Cloud environment)
+os.environ['TESSDATA_PREFIX'] = '/usr/share/tesseract-ocr/4.00/tessdata'  # Set the path to Tesseract data
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Tesseract executable path
 
 # Page configuration
 st.set_page_config(
-    page_title="Tesseract OCR",
+    page_title="Llama OCR",
     page_icon="🦙",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Title and description in main area
-st.title("🦙 Tesseract OCR")
-
-# Add clear button to top right
-col1, col2 = st.columns([6, 1])
-with col2:
-    if st.button("Clear 🗑️"):
-        if 'ocr_result' in st.session_state:
-            del st.session_state['ocr_result']
-        st.rerun()
-
+# Title and description in the main area
+st.title("🦙 Llama OCR")
 st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Tesseract OCR!</p>', unsafe_allow_html=True)
 st.markdown("---")
 
@@ -33,27 +29,21 @@ with st.sidebar:
         # Display the uploaded image
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image")
-        
+
+        # Extract text from the uploaded image
         if st.button("Extract Text 🔍", type="primary"):
             with st.spinner("Processing image..."):
                 try:
-                    # Use Tesseract to extract text from the image
-                    ocr_result = pytesseract.image_to_string(image)
-
-                    # Save OCR result to session state
-                    if 'ocr_result' not in st.session_state:
-                        st.session_state['ocr_result'] = ""
-                    st.session_state['ocr_result'] = ocr_result
-                    
+                    # Use pytesseract to extract text
+                    extracted_text = pytesseract.image_to_string(image)
+                    st.session_state['ocr_result'] = extracted_text
                 except Exception as e:
-                    st.error(f"An error occurred: {str(e)}")
+                    st.error(f"Error processing image: {str(e)}")
 
-# Main content area for results
+# Display the OCR result
 if 'ocr_result' in st.session_state:
-    if st.session_state['ocr_result']:
-        st.markdown(st.session_state['ocr_result'])
-    else:
-        st.warning("No OCR result available.")
+    st.subheader("Extracted Text")
+    st.text_area("OCR Result", st.session_state['ocr_result'], height=300)
 else:
     st.info("Upload an image and click 'Extract Text' to see the results here.")
 
