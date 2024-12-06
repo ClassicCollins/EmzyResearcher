@@ -2,10 +2,25 @@ import streamlit as st
 import pytesseract
 from PIL import Image
 import os
+import subprocess
 
-# Set Tesseract path (ensure it's available in the Streamlit Cloud environment)
-os.environ['TESSDATA_PREFIX'] = '/usr/share/tesseract-ocr/4.00/tessdata'  # Set the path to Tesseract data
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Tesseract executable path
+# Function to check if Tesseract is installed and accessible
+def check_tesseract():
+    try:
+        # Run the command to get Tesseract version
+        subprocess.run(["tesseract", "--version"], check=True)
+        return True
+    except FileNotFoundError:
+        return False
+
+# Set the Tesseract executable path based on environment
+if not check_tesseract():
+    st.error("Tesseract is not installed or not found in the PATH.")
+else:
+    st.success("Tesseract is installed and ready to use!")
+
+# Set Tesseract path manually (modify if necessary for Streamlit Cloud)
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"  # Common default path for Streamlit Cloud
 
 # Page configuration
 st.set_page_config(
@@ -15,7 +30,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Title and description in the main area
+# Title and description in main area
 st.title("🦙 Llama OCR")
 st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Tesseract OCR!</p>', unsafe_allow_html=True)
 st.markdown("---")
