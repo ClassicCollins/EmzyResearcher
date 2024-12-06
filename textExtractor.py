@@ -1,26 +1,8 @@
 import streamlit as st
-import pytesseract
+import ollama
 from PIL import Image
-import os
-import subprocess
-
-# Function to check if Tesseract is installed and accessible
-def check_tesseract():
-    try:
-        # Run the command to get Tesseract version
-        subprocess.run(["tesseract", "--version"], check=True)
-        return True
-    except FileNotFoundError:
-        return False
-
-# Set the Tesseract executable path based on environment
-if not check_tesseract():
-    st.error("Tesseract is not installed or not found in the PATH.")
-else:
-    st.success("Tesseract is installed and ready to use!")
-
-# Set Tesseract path manually (modify if necessary for Streamlit Cloud)
-pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"  # Common default path for Streamlit Cloud
+import io
+import time
 
 # Page configuration
 st.set_page_config(
@@ -32,7 +14,16 @@ st.set_page_config(
 
 # Title and description in main area
 st.title("🦙 Llama OCR")
-st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Tesseract OCR!</p>', unsafe_allow_html=True)
+
+# Add clear button to top right
+col1, col2 = st.columns([6, 1])
+with col2:
+    if st.button("Clear 🗑️"):
+        if 'ocr_result' in st.session_state:
+            del st.session_state['ocr_result']
+        st.rerun()
+
+st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Llama 3.2 Vision!</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # Move upload controls to sidebar
@@ -44,24 +35,55 @@ with st.sidebar:
         # Display the uploaded image
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image")
-
-        # Extract text from the uploaded image
+        
+        # Allow users to select the model version (optional)
+        model_version = st.selectbox("Select Model Version", ["llama3.2-vision", "llama2-vision"], index=0)
+        
         if st.button("Extract Text 🔍", type="primary"):
             with st.spinner("Processing image..."):
                 try:
-                    # Use pytesseract to extract text
-                    extracted_text = pytesseract.image_to_string(image)
-                    st.session_state['ocr_result'] = extracted_text
+                    # Retry logic: try up to 3 times
+                    retries = 3
+                    for attempt in range(retries):
+                        try:
+                            response = ollama.chat(
+                                model=model_version,
+                                messages=[{
+                                    'role': 'user',
+                                    'content': """Analyze the text in the provided image. Extract all readable content
+                                                and present it in a structured Markdown format that is clear, concise, 
+                                                and well-organized. Ensure proper formatting (e.g., headings, lists, or
+                                                code blocks) as necessary to represent the content effectively.""",
+                                    'images': [uploaded_file.getvalue()]  # Sending image as raw bytes
+                                }]
+                            )
+                            
+                            # Save OCR result to session state
+                            if 'ocr_result' not in st.session_state:
+                                st.session_state['ocr_result'] = ""
+                            st.session_state['ocr_result'] = response.message.content
+                            break  # Exit loop if successful
+                        
+                        except Exception as e:
+                            if attempt < retries - 1:
+                                st.warning(f"Connection failed (Attempt {attempt+1}/{retries}), retrying...")
+                                time.sleep(2)  # Wait before retrying
+                            else:
+                                st.error(f"Failed to process image after {retries} attempts: {str(e)}")
+                                break  # Give up after retries
+                            
                 except Exception as e:
-                    st.error(f"Error processing image: {str(e)}")
+                    st.error(f"An error occurred: {str(e)}")
 
-# Display the OCR result
+# Main content area for results
 if 'ocr_result' in st.session_state:
-    st.subheader("Extracted Text")
-    st.text_area("OCR Result", st.session_state['ocr_result'], height=300)
+    if st.session_state['ocr_result']:
+        st.markdown(st.session_state['ocr_result'])
+    else:
+        st.warning("No OCR result available.")
 else:
     st.info("Upload an image and click 'Extract Text' to see the results here.")
 
 # Footer
 st.markdown("---")
-st.markdown("Made with ❤️ using Tesseract OCR | [Report an Issue](https://github.com/)")
+st.markdown("Made with ❤️ using Llama Vision Model2 | [Report an Issue](https://github.com/)")
