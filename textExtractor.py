@@ -2,6 +2,7 @@ import streamlit as st
 import ollama
 from PIL import Image
 import io
+import base64
 
 # Set up page configuration
 st.set_page_config(
@@ -11,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Title and description in main area
+# Title and description in the main area
 st.title("🦙 Ollama OCR")
 st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Ollama OCR!</p>', unsafe_allow_html=True)
 st.markdown("---")
@@ -29,16 +30,18 @@ with st.sidebar:
         if st.button("Extract Text 🔍"):
             with st.spinner("Processing image..."):
                 try:
-                    # Convert the image to bytes (needed for API processing)
+                    # Convert image to base64
                     img_bytes = uploaded_file.getvalue()
+                    img_base64 = base64.b64encode(img_bytes).decode("utf-8")
 
-                    # Assuming Ollama has a specific function for OCR/image processing
-                    # Example: if Ollama uses a different function like `ollama.ocr()`
-                    # You need to confirm the function and usage with Ollama's documentation
-
-                    response = ollama.ocr(  # This is speculative. Please verify with Ollama docs.
+                    # Send the base64 image data to the Ollama model
+                    response = ollama.chat(
                         model="llama3.2-vision",  # Replace with the actual model you're using
-                        image=img_bytes  # Sending image data
+                        messages=[{
+                            'role': 'user',
+                            'content': "What is in this image?"
+                        }],
+                        image=img_base64  # Send the base64 encoded image here (if Ollama accepts this format)
                     )
 
                     # Store the result in session state
