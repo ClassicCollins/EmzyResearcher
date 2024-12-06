@@ -1,4 +1,5 @@
 streamlit
+pytesseract
 ollama
 Pillow
 duckduckgo-search
