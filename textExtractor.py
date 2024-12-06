@@ -2,22 +2,30 @@ import streamlit as st
 import ollama
 from PIL import Image
 import io
-import base64
 
-# Set up page configuration
+# Page configuration
 st.set_page_config(
-    page_title="Ollama OCR",
+    page_title="Llama OCR",
     page_icon="🦙",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Title and description in the main area
-st.title("🦙 Ollama OCR")
-st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Ollama OCR!</p>', unsafe_allow_html=True)
+# Title and description in main area
+st.title("🦙 Llama OCR")
+
+# Add clear button to top right
+col1, col2 = st.columns([6,1])
+with col2:
+    if st.button("Clear 🗑️"):
+        if 'ocr_result' in st.session_state:
+            del st.session_state['ocr_result']
+        st.rerun()
+
+st.markdown('<p style="margin-top: -20px;">Extract structured text from images using Llama 3.2 Vision!</p>', unsafe_allow_html=True)
 st.markdown("---")
 
-# Upload controls in the sidebar
+# Move upload controls to sidebar
 with st.sidebar:
     st.header("Upload Image")
     uploaded_file = st.file_uploader("Choose an image...", type=['png', 'jpg', 'jpeg'])
@@ -26,37 +34,28 @@ with st.sidebar:
         # Display the uploaded image
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image")
-
-        if st.button("Extract Text 🔍"):
+        
+        if st.button("Extract Text 🔍", type="primary"):
             with st.spinner("Processing image..."):
                 try:
-                    # Convert image to base64
-                    img_bytes = uploaded_file.getvalue()
-                    img_base64 = base64.b64encode(img_bytes).decode("utf-8")
-
-                    # Send the base64 image data to the Ollama model
                     response = ollama.chat(
-                        model="llama3.2-vision",  # Replace with the actual model you're using
+                        model='llama3.2-vision',
                         messages=[{
                             'role': 'user',
-                            'content': "What is in this image?"
-                        }],
-                        image=img_base64  # Send the base64 encoded image here (if Ollama accepts this format)
+                            'content': 'What is in this image?',
+                            'images': [uploaded_file.getvalue()]
+                        }]
                     )
-
-                    # Store the result in session state
                     st.session_state['ocr_result'] = response.message.content
-
                 except Exception as e:
                     st.error(f"Error processing image: {str(e)}")
 
-# Display the result of OCR extraction
+# Main content area for results
 if 'ocr_result' in st.session_state:
-    st.subheader("Extracted Text")
-    st.text_area("OCR Result", st.session_state['ocr_result'], height=300)
+    st.markdown(st.session_state['ocr_result'])
 else:
     st.info("Upload an image and click 'Extract Text' to see the results here.")
 
 # Footer
 st.markdown("---")
-st.markdown("Made with ❤️ using Ollama Model | [Report an Issue](https://github.com/)")
+st.markdown("Made with ❤️ using Llama Vision Model2 | [Report an Issue](https://github.com/patchy631/ai-engineering-hub/issues)")
